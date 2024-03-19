@@ -3,4 +3,4 @@ This is a respository for all of the different project I have created, completed
 
 
 ### Google Sheet Projects
-1. Lead Tracker Template -- 
+1. [Lead Tracker Template](https://github.com/tpalmerton/Fun-Projects/blob/main/Lead_Tracker_Template) -- 
