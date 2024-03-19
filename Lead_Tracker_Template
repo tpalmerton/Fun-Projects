@@ -1,0 +1,192 @@
+# Lead Tracker Template
+###This is a lead tracker used during my time in Expensify. Included is the GoogleAppsScript which utilizes moving lines on the different sheets to progress with where leads were at within my pipeline.
+### Cell A includes a notifcation to "Bump Customer" every 3 days from the date of last engaged.
+[Lead Tracker Template (Google Sheets +Google Apps Script):](https://docs.google.com/spreadsheets/d/1gGxqmAPP2YRg-8Rv0_IGEnuYW0Kd6Bpe97Us9v129M0/edit?usp=sharing)
+
+I have also included the GoogleAppsSCript here:
+function onEdit(event) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var s = event.source.getActiveSheet();
+  var r = event.source.getActiveRange();
+  var ts = ss.getSheetByName("Pipeline Visualization");
+  
+ 
+  
+  // Check if the edited cell is in columns D, E, F, O, or R and the value is true
+  if ((r.getColumn() >= 4 && r.getColumn() <= 7 || r.getColumn() === 15 || r.getColumn() === 18) && event.value === "TRUE") {
+    // Get the corresponding row of the edited cell
+    var row = r.getRow();
+    
+    // Get today's date
+    var today = new Date();
+    
+    // Format the date as per your requirement
+    var formattedDate = Utilities.formatDate(today, "yourTimeZoneHere", "MM/dd/yyyy");
+    
+    // Write the date in column C of the same row
+    s.getRange(row, 3).setValue(formattedDate);
+  }
+  // Check if edited cell is in column M
+  if (r.getColumn() == 13) { // M column
+      
+  // Check if the edited value is a button press
+  if (r.getValue() == true) { 
+    var row = r.getRow();
+    var numColumns = s.getLastColumn();
+    var targetSheet = ss.getSheetByName("Demo Set");
+    
+    // Insert a new row at row 2 (below header row) of the target sheet
+    targetSheet.insertRowAfter(1);
+    
+    // Get the range for the newly inserted row
+    var targetRange = targetSheet.getRange(2, 1, 1, numColumns);
+    
+    // Move the row data to the target range
+    s.getRange(row, 1, 1, numColumns).moveTo(targetRange);
+    
+    // Delete row from original sheet
+    s.deleteRow(row);
+  }
+}
+ // Check if edited cell is in column N
+  if (r.getColumn() == 14) { // N column
+      
+  // Check if the edited value is a button press
+  if (r.getValue() == true) { 
+    var row = r.getRow();
+    var numColumns = s.getLastColumn();
+    var targetSheet = ss.getSheetByName("Demo Held");
+    
+    // Insert a new row at row 2 (below header row) of the target sheet
+    targetSheet.insertRowAfter(1);
+    
+    // Get the range for the newly inserted row
+    var targetRange = targetSheet.getRange(2, 1, 1, numColumns);
+    
+    // Move the row data to the target range
+    s.getRange(row, 1, 1, numColumns).moveTo(targetRange);
+    
+    // Delete row from original sheet
+    s.deleteRow(row);
+  }
+}
+// Check if edited cell is in column O
+  if (r.getColumn() == 16) { // AD column
+      
+  // Check if the edited value is a button press
+  if (r.getValue() == true) { 
+    var row = r.getRow();
+    var numColumns = s.getLastColumn();
+    var targetSheet = ss.getSheetByName("Implementation");
+    
+    // Insert a new row at row 2 (below header row) of the target sheet
+    targetSheet.insertRowAfter(1);
+    
+    // Get the range for the newly inserted row
+    var targetRange = targetSheet.getRange(2, 1, 1, numColumns);
+    
+    // Move the row data to the target range
+    s.getRange(row, 1, 1, numColumns).moveTo(targetRange);
+    
+    // Delete row from original sheet
+    s.deleteRow(row);
+  }
+}
+// Check if edited cell is in column 26
+  if (r.getColumn() == 28) { 
+      
+  // Check if the edited value is a button press
+  if (r.getValue() == true) { 
+    var row = r.getRow();
+    var numColumns = s.getLastColumn();
+    var targetSheet = ss.getSheetByName("Ready for Submission");
+    
+    // Insert a new row at row 2 (below header row) of the target sheet
+    targetSheet.insertRowAfter(1);
+    
+    // Get the range for the newly inserted row
+    var targetRange = targetSheet.getRange(2, 1, 1, numColumns);
+    
+    // Move the row data to the target range
+    s.getRange(row, 1, 1, numColumns).moveTo(targetRange);
+    
+    // Delete row from original sheet
+    s.deleteRow(row);
+  }
+}
+// Check if edited cell is in column AD
+  if (r.getColumn() == 29) { // AD column
+      
+  // Check if the edited value is a button press
+  if (r.getValue() == true) { 
+    var row = r.getRow();
+    var numColumns = s.getLastColumn();
+    var targetSheet = ss.getSheetByName("Won Deals");
+    
+    // Insert a new row at row 2 (below header row) of the target sheet
+    targetSheet.insertRowAfter(1);
+    
+    // Get the range for the newly inserted row
+    var targetRange = targetSheet.getRange(2, 1, 1, numColumns);
+    
+    // Move the row data to the target range
+    s.getRange(row, 1, 1, numColumns).moveTo(targetRange);
+    
+    // Delete row from original sheet
+    s.deleteRow(row);
+  }
+}
+  if (r.getColumn() == 30) { // AD column
+      
+  // Check if the edited value is a button press
+  if (r.getValue() == true) { 
+    var row = r.getRow();
+    var numColumns = s.getLastColumn();
+    var targetSheet = ss.getSheetByName("Unresponsive/Not Interested");
+    
+    // Insert a new row at row 2 (below header row) of the target sheet
+    targetSheet.insertRowAfter(1);
+    
+    // Get the range for the newly inserted row
+    var targetRange = targetSheet.getRange(2, 1, 1, numColumns);
+    
+    // Move the row data to the target range
+    s.getRange(row, 1, 1, numColumns).moveTo(targetRange);
+    
+    // Delete row from original sheet
+    s.deleteRow(row);
+  }
+}
+}
+function countBumpCustomerMessages() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheetsToCheck = ["Cold/ Not Started", "Demo Set", "Demo Held", "Implementation", "Ready for Submission"];
+  var totalCount = 0;
+
+  // Loop through the specified sheets
+  for (var i = 0; i < sheetsToCheck.length; i++) {
+    var sheetName = sheetsToCheck[i];
+    var sheet = ss.getSheetByName(sheetName);
+    
+    if (sheet) { // Check if the sheet exists
+      var data = sheet.getRange("A:A").getValues();
+
+      // Loop through each row in column A and count "Bump Customer" messages
+      for (var j = 0; j < data.length; j++) {
+        if (data[j][0] == "Bump Customer") {
+          totalCount++;
+        }
+      }
+    }
+  }
+
+  // Display a popup with the total count of "Bump Customer" messages
+  SpreadsheetApp.getUi().alert("Total Bumps to complete: " + totalCount);
+}
+
+function onOpen() {
+  var ui = SpreadsheetApp.getUi();
+  ui.createMenu('Custom Menu')
+      .addItem('Count "Bump Customer" Messages', 'countBumpCustomerMessages')
+      .addToUi();
+}
