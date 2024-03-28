@@ -1,19 +1,20 @@
 # Lead Tracker Template
 ###This is a lead tracker used during my time in Expensify. Included is the GoogleAppsScript which utilizes moving lines on the different sheets to progress with where leads were at within my pipeline.
 ### Cell A includes a notifcation to "Bump Customer" every 3 days from the date of last engaged.
-[Lead Tracker Template (Google Sheets +Google Apps Script):](https://docs.google.com/spreadsheets/d/1gGxqmAPP2YRg-8Rv0_IGEnuYW0Kd6Bpe97Us9v129M0/edit?usp=sharing)
+[Lead Tracker Template (Google Sheets +Google Apps Script):](https://docs.google.com/spreadsheets/d/1t2gAxxgyJxeLuGk9tsM42i7-5A4nTHrLPGXUYAsGBmw/edit?usp=sharing)
 
 I have also included the GoogleAppsSCript here:
 function onEdit(event) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var s = event.source.getActiveSheet();
   var r = event.source.getActiveRange();
-  var ts = ss.getSheetByName("Pipeline Visualization");
+  
+  
   
  
   
-  // Check if the edited cell is in columns D, E, F, O, or R and the value is true
-  if ((r.getColumn() >= 4 && r.getColumn() <= 7 || r.getColumn() === 15 || r.getColumn() === 18) && event.value === "TRUE") {
+  // (Checks for activity)
+  if ((r.getColumn() === 4 ||r.getColumn() === 5 ||r.getColumn() >= 11 && r.getColumn() <= 14 ||  r.getColumn() === 16 || r.getColumn() >= 18 && r.getColumn() <= 20 ) && event.value === "TRUE" && s.getName() !== "Pipeline Visualization") {
     // Get the corresponding row of the edited cell
     var row = r.getRow();
     
@@ -26,8 +27,8 @@ function onEdit(event) {
     // Write the date in column C of the same row
     s.getRange(row, 3).setValue(formattedDate);
   }
-  // Check if edited cell is in column M
-  if (r.getColumn() == 13) { // M column
+  // Check if edited cell is in column Demo Set
+  if (r.getColumn() == 11 && s.getName() !== "Pipeline Visualization")  { // M column
       
   // Check if the edited value is a button press
   if (r.getValue() == true) { 
@@ -48,11 +49,11 @@ function onEdit(event) {
     s.deleteRow(row);
   }
 }
- // Check if edited cell is in column N
-  if (r.getColumn() == 14) { // N column
+ // Check if edited cell is in column Demo Held
+  if (r.getColumn() == 12) { // N column
       
   // Check if the edited value is a button press
-  if (r.getValue() == true) { 
+  if (s.getName() !== "Pipeline Visualization" && r.getValue() == true) { 
     var row = r.getRow();
     var numColumns = s.getLastColumn();
     var targetSheet = ss.getSheetByName("Demo Held");
@@ -70,8 +71,8 @@ function onEdit(event) {
     s.deleteRow(row);
   }
 }
-// Check if edited cell is in column O
-  if (r.getColumn() == 16) { // AD column
+// Check if edited cell is in column Implementation
+  if (r.getColumn() == 14) { // AD column
       
   // Check if the edited value is a button press
   if (r.getValue() == true) { 
@@ -92,8 +93,8 @@ function onEdit(event) {
     s.deleteRow(row);
   }
 }
-// Check if edited cell is in column 26
-  if (r.getColumn() == 28) { 
+// Check if edited cell is in column Ready for Submission
+  if (r.getColumn() == 18) { 
       
   // Check if the edited value is a button press
   if (r.getValue() == true) { 
@@ -114,8 +115,8 @@ function onEdit(event) {
     s.deleteRow(row);
   }
 }
-// Check if edited cell is in column AD
-  if (r.getColumn() == 29) { // AD column
+// Check if edited cell is in column WON
+  if (r.getColumn() == 19) { 
       
   // Check if the edited value is a button press
   if (r.getValue() == true) { 
@@ -136,7 +137,7 @@ function onEdit(event) {
     s.deleteRow(row);
   }
 }
-  if (r.getColumn() == 30) { // AD column
+  if (r.getColumn() == 20) { // AD column, Unresponsive/Not Interested moves to separate sheet
       
   // Check if the edited value is a button press
   if (r.getValue() == true) { 
@@ -157,7 +158,22 @@ function onEdit(event) {
     s.deleteRow(row);
   }
 }
+// Timestamp for Won deal 
+if (s.getName() === "Pipeline Visualization" && r.getColumn() === 12 && event.value === "TRUE") { //This is to confirm the "Won" button in column 11 is checked
+    // Get the corresponding row of the edited cell
+    var row = r.getRow();
+    
+    // Get today's date
+    var today = new Date();
+    
+    // Format the date as per your requirement if you desire
+    var formattedDate = Utilities.formatDate(today, "yourTimeZoneHere", "MM/dd/yyyy"); 
+    
+    // Write the date in column 12 of the same row
+    s.getRange(row, 13).setValue(formattedDate);
+  }
 }
+
 function countBumpCustomerMessages() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheetsToCheck = ["Cold/ Not Started", "Demo Set", "Demo Held", "Implementation", "Ready for Submission"];
@@ -184,9 +200,130 @@ function countBumpCustomerMessages() {
   SpreadsheetApp.getUi().alert("Total Bumps to complete: " + totalCount);
 }
 
+function versionPopUp() {
+  var message = "Version 3.002\n\n" +
+                "**New Features!**\n" +
+                "Simply click Demo Set, Demo Held, Implementation, Won, or Unresponsive/Notinterested to move it to that sheet from any sheet. No more having to move the rows through each sheet!\n\n" +
+                "Do Not worry about filling out the Notification or Date Last Contacted\n\n" +
+                "Notification: This will show Bump Customer if the date assigned in Last contacted is more than 3 days\n\n" +
+                "Date Last Contacted: This will autofill everytime you update your checkboxes\n\n\n" +
+                "**New Pipeline visualization Sheet**\n\n" +
+                "In Pipeline visualization you can easily track Projected month close dates, see on average meetings to close, average months to close and average deal size\n\n"+
+                "Won Column: When you select the won column, it will auto-add the date for you! If you are backlogging any infomration, simply delete the Won date cell with the appropriate date\n\n"+
+                "Update Stats Button: This button will allow you to update your average stats as well as update the Projected month to close column. It uses all the rows that have been Won. So make sure to add in Seats and meetings held\n\n";
+
+  SpreadsheetApp.getUi().alert("Message", message, SpreadsheetApp.getUi().ButtonSet.OK);
+}
+
 function onOpen() {
   var ui = SpreadsheetApp.getUi();
   ui.createMenu('Custom Menu')
       .addItem('Count "Bump Customer" Messages', 'countBumpCustomerMessages')
+      .addItem('Version 3.002', 'versionPopUp')
       .addToUi();
+  
+}
+
+function updateStats() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var lastRow = sheet.getLastRow();
+  var checkboxRange = sheet.getRange('L2:L' + lastRow).getValues();
+  var columnERange = sheet.getRange('E2:E' + lastRow).getValues();
+  var columnFRange = sheet.getRange('F2:F' + lastRow).getValues();
+  var dateORange = sheet.getRange('M2:M' + lastRow).getValues();
+  var dateBRange = sheet.getRange('B2:B' + lastRow).getValues();
+  var sumE = 0;
+  var sumF = 0;
+  var totalMonths = 0;
+  var count = 0;
+
+  for (var i = 0; i < checkboxRange.length; i++) {
+    if (checkboxRange[i][0] === true) {
+      sumE += columnERange[i][0];
+      sumF += columnFRange[i][0];
+      var dateO = new Date(dateORange[i][0]);
+      var dateB = new Date(dateBRange[i][0]);
+      var diff = Math.abs(dateO - dateB); // Get the difference in milliseconds
+      var months = diff / (1000 * 60 * 60 * 24 * 30.44); // Convert milliseconds to months
+      totalMonths += months;
+      count++;
+    }
+  }
+
+  var averageE = count > 0 ? sumE / count : 0; // Prevent division by zero
+  var averageF = count > 0 ? sumF / count : 0; // Prevent division by zero
+  var averageMonths = count > 0 ? totalMonths / count : 0; // Prevent division by zero
+
+  sheet.getRange('N4').setValue(averageE);
+  sheet.getRange('N8').setValue(averageF);
+  sheet.getRange('N12').setValue(averageMonths);
+
+  //var newDate = new Date(dateBRange[0][0]);
+  //newDate.setMonth(newDate.getMonth() + Math.round(4)); //replaced averageMonths with 4 to see what happens
+  //sheet.getRange('A3:A').setValue(newDate);
+
+  // Get the value from cell B3 (assumed to be a valid date)
+  //var initialDate = sheet.getRange('B3').getValue();
+  
+  // Get the number of months from cell N12
+  //var numberOfMonths = sheet.getRange('N12').getValue();
+  
+  // Add the specified number of months to the initial date
+  //var newDate = new Date(initialDate);
+  //newDate.setMonth(newDate.getMonth() + numberOfMonths);
+
+  // Set the value of cell A3 to the new date
+  //sheet.getRange('A3').setValue(newDate);
+  // Get the range of cells in column B
+  var rangeB = sheet.getRange('B3:B');
+  
+  // Get all values from column B
+  var valuesB = rangeB.getValues();
+  
+  // Get the number of months from cell N12
+  var numberOfMonths = sheet.getRange('N12').getValue();
+  
+  // Initialize an empty array to store new dates
+  var newDates = [];
+  
+  // Iterate over each value in column B
+  for (var i = 0; i < valuesB.length; i++) {
+    var cellValue = valuesB[i][0];
+    
+    // Check if the cell contains a valid date
+    if (cellValue instanceof Date && !isNaN(cellValue.getTime())) {
+      // Create a new date by adding the specified number of months
+      var newDate = new Date(cellValue);
+      newDate.setMonth(newDate.getMonth() + numberOfMonths);
+      
+      // Add the new date to the array
+      newDates.push([newDate]);
+    } else {
+      // If the cell does not contain a valid date, push an empty string to the array
+      newDates.push(['']);
+    }
+  }
+  
+  // Get the range for column A starting from row 3
+  var rangeA = sheet.getRange('A3:A' + (newDates.length + 2));
+  
+  // Set the values in column A to the new dates
+  rangeA.setValues(newDates);
+}
+
+function oneTimePopup() {
+  var userProperties = PropertiesService.getUserProperties();
+  
+  // Check if the user has already seen the popup
+  var hasSeenPopup = userProperties.getProperty('hasSeenPopup');
+  
+  // If the user has not seen the popup yet
+  if (!hasSeenPopup) {
+    // Show the popup
+    var htmlOutput = HtmlService.createHtmlOutput('<b>This is a one-time popup message.</b><br><br>Thank you for using this sheet!');
+    SpreadsheetApp.getUi().showModalDialog(htmlOutput, 'One-Time Popup');
+    
+    // Set the property to indicate that the user has seen the popup
+    userProperties.setProperty('hasSeenPopup', 'true');
+  }
 }
