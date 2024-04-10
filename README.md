@@ -4,6 +4,7 @@ This is a respository for all of the different project I have created, completed
 
 ### Google Sheet Projects
 1. [Lead Tracker Template](https://github.com/tpalmerton/Fun-Projects/blob/main/Lead_Tracker_Template) -- [Lead Tracker Template (Google Sheets +Google Apps Script):](https://docs.google.com/spreadsheets/d/1t2gAxxgyJxeLuGk9tsM42i7-5A4nTHrLPGXUYAsGBmw/edit?usp=sharing)
+2. [Tracker stats built for Cintas Client](https://github.com/tpalmerton/Fun-Projects/blob/main/GoogleSheetsProject_Cintas)
 
 
 ### Coursera IBM Data SCience Final Project
