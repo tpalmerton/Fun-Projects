@@ -1,0 +1,176 @@
+function onEdit(e) {
+  var editedRange = e.range;
+  var sheet = editedRange.getSheet();
+  var sheetName = sheet.getName();
+
+  // Check if the edit was made in the "Rep Tracker" sheet
+  if (sheetName == 'Rep Tracker') {
+    calculateAverageDays();
+  }
+}
+
+//Calculates the number of days between certain columns on the Rep Tracker Sheet
+function calculateAverageDays() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var trackingSheet = ss.getSheetByName('Rep Tracker');
+  var statsSheet = ss.getSheetByName('Tracker Stats');
+
+  var dataRange = trackingSheet.getDataRange();
+  var values = dataRange.getValues();
+
+  var averagesGtoF = {};
+  var countsGtoF = {};
+  var averagesGtoJ = {};
+  var countsGtoJ = {};
+  var averagesFtoJ = {};
+  var countsFtoJ = {};
+  var averagesFtoK = {};
+  var countsFtoK = {};
+  var averagesJtoK = {};
+  var countsJtoK = {};
+  var closedWonCount = {};
+  var totalCount = {};
+  var percentage = {};
+
+  for (var i = 1; i < values.length; i++) {
+    var valueA = values[i][0]; // columnA (Reps)
+    var statusM = values[i][12]; // column M (Status)
+    var dateG = values[i][6]; // column G (Demo Set)
+    var dateF = values[i][5];  // column F( Date Quote Sent)
+    var dateJ = values[i][9];  // column J (Demo Held)
+    var dateK = values[i][10]; // column K (Date Signed Agreement)
+    
+
+    // calculates the days for the reps in column A between Demo Set(column G) and Date Quote Sent (Column F)
+    if (valueA && dateG instanceof Date && dateF instanceof Date) {
+      var diffDaysGF = Math.abs(dateG - dateF) / (1000 * 60 * 60 * 24);
+
+      if (!averagesGtoF[valueA]) {
+        averagesGtoF[valueA] = diffDaysGF;
+        countsGtoF[valueA] = 1;
+      } else {
+        averagesGtoF[valueA] += diffDaysGF;
+        countsGtoF[valueA]++;
+      }
+    }
+    
+    // calculates the days for the reps (column A) between Demo Set (column G) and Demo Held (column J)
+    if (valueA && dateG instanceof Date && dateJ instanceof Date) {
+      var diffDaysGJ = Math.abs(dateG - dateJ) / (1000 * 60 * 60 * 24);
+
+      if (!averagesGtoJ[valueA]) {
+        averagesGtoJ[valueA] = diffDaysGJ;
+        countsGtoJ[valueA] = 1;
+      } else {
+        averagesGtoJ[valueA] += diffDaysGJ;
+        countsGtoJ[valueA]++;
+      }
+    }
+    
+    // Caluculates the days for the reps (Column A) between Date Quote Sent (Column F) and Demo Held (Column J)
+    if (valueA && dateF instanceof Date && dateJ instanceof Date) {
+      var diffDaysFJ = Math.abs(dateF - dateJ) / (1000 * 60 * 60 * 24);
+
+      if (!averagesFtoJ[valueA]) {
+        averagesFtoJ[valueA] = diffDaysFJ;
+        countsFtoJ[valueA] = 1;
+      } else {
+        averagesFtoJ[valueA] += diffDaysFJ;
+        countsFtoJ[valueA]++;
+      }
+    }
+
+    // Caluculates the days for the reps (Column A) between Date Quote Sent (Column F) and Demo Signed Agreement(Column K) If Closed Won (Column M)
+    if (statusM === 'Closed Won' && valueA && dateF instanceof Date && dateK instanceof Date) {
+      var diffDaysFK = Math.abs(dateF - dateK) / (1000 * 60 * 60 * 24);
+
+      if (!averagesFtoK[valueA]) {
+        averagesFtoK[valueA] = diffDaysFK;
+        countsFtoK[valueA] = 1;
+      } else {
+        averagesFtoK[valueA] += diffDaysFK;
+        countsFtoK[valueA]++;
+      }
+    }
+
+    // Caluculates the days for the reps (Column A) between Demo held (Column J) and Demo Signed Agreement(Column K) If Closed Won (Column M)
+    if (statusM === 'Closed Won' && valueA && dateJ instanceof Date && dateK instanceof Date) {
+      var diffDaysJK = Math.abs(dateJ - dateK) / (1000 * 60 * 60 * 24);
+
+      if (!averagesJtoK[valueA]) {
+        averagesJtoK[valueA] = diffDaysJK;
+        countsJtoK[valueA] = 1;
+      } else {
+        averagesJtoK[valueA] += diffDaysJK;
+        countsJtoK[valueA]++;
+      }
+    }
+
+    if (statusM === 'Closed Won') {
+      // Increment closedWonCount for the rep
+      closedWonCount[valueA] = (closedWonCount[valueA] || 0) + 1;
+    }
+    totalCount[valueA] = (totalCount[valueA] || 0) + 1;
+  
+  }
+  // Write closedWonCount and totalCount to the Tracker Stats sheet
+  for (var key in closedWonCount) {
+    var closedWon = closedWonCount[key];
+    var total = totalCount[key];
+    percentage[key] = (closedWon / total) || 0; // Calculate percentage
+
+    
+  }
+
+  
+
+  for (var key in averagesGtoF) {
+    averagesGtoF[key] /= countsGtoF[key];
+  }
+
+  for (var key in averagesGtoJ) {
+    averagesGtoJ[key] /= countsGtoJ[key];
+  }
+
+  for (var key in averagesFtoJ) {
+    averagesFtoJ[key] /= countsFtoJ[key];
+  }
+  for (var key in averagesFtoK) {
+    averagesFtoK[key] /= countsFtoK[key];
+  }
+
+  for (var key in averagesJtoK) {
+    averagesJtoK[key] /= countsJtoK[key];
+  }
+
+  // Set the averages in specified cells on the "Tracker stats" sheet
+  statsSheet.getRange('B39').setValue(averagesGtoF['Austin Gilligan']);
+  statsSheet.getRange('B40').setValue(averagesGtoF['Ken Jones']);
+  statsSheet.getRange('B41').setValue(averagesGtoF['Matt Bailey']);
+  statsSheet.getRange('B42').setValue(averagesGtoF['Trace Helfrich']);
+
+  statsSheet.getRange('E39').setValue(averagesGtoJ['Austin Gilligan']);
+  statsSheet.getRange('E40').setValue(averagesGtoJ['Ken Jones']);
+  statsSheet.getRange('E41').setValue(averagesGtoJ['Matt Bailey']);
+  statsSheet.getRange('E42').setValue(averagesGtoJ['Trace Helfrich']);
+
+  statsSheet.getRange('B47').setValue(averagesFtoJ['Austin Gilligan']);
+  statsSheet.getRange('B48').setValue(averagesFtoJ['Ken Jones']);
+  statsSheet.getRange('B49').setValue(averagesFtoJ['Matt Bailey']);
+  statsSheet.getRange('B50').setValue(averagesFtoJ['Trace Helfrich']);
+
+  statsSheet.getRange('E47').setValue(averagesFtoK['Austin Gilligan']);
+  statsSheet.getRange('E48').setValue(averagesFtoK['Ken Jones']);
+  statsSheet.getRange('E49').setValue(averagesFtoK['Matt Bailey']);
+  statsSheet.getRange('E50').setValue(averagesFtoK['Trace Helfrich']);
+
+  statsSheet.getRange('H47').setValue(averagesJtoK['Austin Gilligan']);
+  statsSheet.getRange('H48').setValue(averagesJtoK['Ken Jones']);
+  statsSheet.getRange('H49').setValue(averagesJtoK['Matt Bailey']);
+  statsSheet.getRange('H50').setValue(averagesJtoK['Trace Helfrich']);
+
+  statsSheet.getRange('H39').setValue(percentage['Austin Gilligan']);
+  statsSheet.getRange('H40').setValue(percentage['Ken Jones']);
+  statsSheet.getRange('H41').setValue(percentage['Matt Bailey']);
+  statsSheet.getRange('H42').setValue(percentage['Trace Helfrich']);
+}
