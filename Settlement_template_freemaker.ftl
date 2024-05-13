@@ -98,15 +98,12 @@
 
 
 
-<#-- Add to: ptjohn@ideo.com, sklopf@ideo.com, ebarron@ideo.com -->
-<#-- Test Report IDs: 33763992,33712455,33724101-->
-<#-- Template Name: Settlements Report (Current Month Only) -->
-<#-- Creator: jboniface -->
-<#-- Issue URL: https://github.com/Expensify/Expensify/issues/91208  -->
-<#-- Template only targets reimbursed confirmed (stateNum == 6) and reimbursed withdrawing (stateNum == 3) / report-level export -->
-<#-- Only prints reports that were reimbursed in the current month -->
+
 <#if addHeader>
     Date of Settlement Report,<#t>
+    Reimbursement Initiated Date,<#t>
+    Report Withdrawing Status,<#t>
+    Estimated Deposit Date,<#t>
     Company,<#t>
     Debit Amount,<#t>
     Payment ID,<#t>
@@ -150,17 +147,96 @@
         <#else>
             <#assign reportState = "Withdrawing">
         </#if>
-        <#if (.now?string("MM") == report.reimbursed?date("yyyy-MM-dd")?string("MM"))>
             ${.now?string("yyyy-MM-dd")},<#t>  <#-- Date of Settlement Report -->
+            ${report.reimbursed?date("yyyy-MM-dd")?string("yyyy-MM-dd")},<#t><#--  Reimbursement Initiated Date-->
+            ${reportState},<#t><#--  Report Withdrawing Status -->
+            ${expectedDate},<#t><#--  Estimated Deposit Date -->
             ${report.policyName},<#t>  <#-- Company -->
             ${reimbursableTotal?string("0.00")},<#t>  <#-- Debit Amount -->
             ${report.reportID},<#t>  <#-- Payment ID -->
-            ${comment},<#t>  <#-- Description -->
+            ${expense.comment},<#t>  <#-- Description -->
             ${category},<#t>  <#-- GL Category (if applicable) -->
             ${ntag1},<#t>  <#-- Tag1 (if applicable) -->
             ${report.submitterEmail},<#t>  <#-- Submitter Email -->
             ${blank},<#t>  <#-- Report Submitted To (if applicable) -->
             ${blank}<#lt>  <#-- Report First Approved (if applicable) -->
-        </#if>
     </#if>
+</#list>
+
+
+
+
+
+
+
+ADDITIONAL HELP
+<#-- added to: sklopf@ideo.com, sgupta@ideo.com, zzhou@ideo.com -->
+<#-- test reportIDs:  -->
+<#-- template name: Accrual -- Reimbursable -->
+<#-- creator: Ray -->
+<#-- issue URL: https://github.com/Expensify/Expensify/issues/81543 -->
+<#if (addHeader == true)>
+    Policy Name,<#t>
+    Employee Email Address,<#t>
+    Custom Field 1,<#t>
+    Transaction Date,<#t>
+    Amount,<#t>
+    Currency,<#t>
+    Expense Status,<#t>
+    Project/NonProject,<#t>
+    Project ID,<#t>
+    Project Name,<#t>
+    Client Name,<#t>
+    Project Entity,<#t>
+    Studio,<#t>
+    Department,<#t>
+    Merchant,<#t>
+    GL Code,<#t>
+    Comment,<#t>
+    Project Group ID,<#t>
+    Receipt Link<#lt>
+</#if>
+<#list reports as report>
+    <#list report.transactionList as expense>
+        <#if expense.modifiedCreated?has_content>
+            <#assign created = expense.modifiedCreated?date("yyyy-MM-dd")>
+        <#else>
+            <#assign created = expense.created?date("yyyy-MM-dd")>
+        </#if>
+        <#if expense.modifiedMerchant?has_content>
+            <#assign merchant = expense.modifiedMerchant>
+        <#else>
+            <#assign merchant = expense.merchant>
+        </#if>
+        <#if expense.convertedAmount?has_content>
+            <#assign amount = expense.convertedAmount/100>
+        <#elseif expense.modifiedAmount?has_content>
+            <#assign amount = expense.modifiedAmount/100>
+        <#else>
+            <#assign amount = expense.amount/100>
+        </#if>
+        <#assign ntag2Array = expense.ntag2?split("-")>
+        <#assign ntagGlCodeArray = expense.ntag2GlCode?split("-")>
+        <#if expense.reimbursable>
+            <#-- Policy Name -->${report.policyName},<#t>
+            <#-- Employee Email Address -->${report.accountEmail},<#t>
+            <#-- Custom Field 1 -->${report.submitterUserID},<#t>
+            <#-- Transaction Date -->${created?string("M/d/yyyy")},<#t>
+            <#-- Amount -->${amount?string("0.00")},<#t>
+            <#-- Currency -->${expense.currency},<#t>
+            <#-- Expense Status -->${report.status},<#t>
+            <#-- Project/NonProject -->${expense.ntag1},<#t>
+            <#-- Project ID -->"${ntag2Array[2]?replace("\"", "")}",<#t>
+            <#-- Project Name -->"${ntag2Array[1]?replace("\"", "")}",<#t>
+            <#-- Client Name -->"${ntag2Array[0]?replace("\"", "")}",<#t>
+            <#-- Project Entity -->"${ntag2Array[3]?replace("\"", "")}",<#t>
+            <#-- Studio -->"${ntagGlCodeArray[1]?replace("\"", "")}",<#t>
+            <#-- Department -->"${ntagGlCodeArray[2]?replace("\"", "")}",<#t>
+            <#-- Merchant -->${merchant},<#t>
+            <#-- GL Code -->${expense.categoryGlCode},<#t>
+            <#-- Comment -->${expense.comment},<#t>
+            <#-- Project Group ID -->"${ntagGlCodeArray[3]?replace("\"", "")}",<#t>
+            <#-- Receipt Link -->${expense.receiptObject.url}<#lt>
+        </#if>
+    </#list>
 </#list>
