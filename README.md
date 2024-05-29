@@ -13,3 +13,7 @@ This is a respository for all of the different project I have created, completed
 
 ### Python Projects
 1. [Hangman](https://github.com/tpalmerton/Fun-Projects/blob/main/hangman.py)
+
+
+### Freemarker Project
+1. [Settlement template](Settlement_template_freemaker.ftl)
