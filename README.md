@@ -17,3 +17,7 @@ This is a respository for all of the different project I have created, completed
 
 ### Freemarker Project
 1. [Settlement template](Settlement_template_freemaker.ftl)
+
+### Coursera IBM Full Stack Software Developer Professional Cerification Projects
+1. [Thomas J. Watson HTML]()
+   ---First Project for easy HTML code basics
