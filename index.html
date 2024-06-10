@@ -3,24 +3,27 @@
   <head>
     <!-- This is your page title that appears on the browser window or tab -->
     <title>Unit Conversions</title>
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
       <section id="home">
           <!-- this is the main heading-->
           <header><b>Unit Conversions</b></header>
           <nav>
+            <div class="topdiv">
                 <!--This will have the main unit conversion buttons-->
                 <!--Button for redirecting users to the temperature section-->
-                <a href="#temperature"><button>Temperature</button></a>
+                <a href="#temperature"><button class="topmenu">Temperature</button></a>
                 <!--Button for redirecting users to the weight section-->
-                <a href="#weight"><button>Weight</button></a>
+                <a href="#weight"><button class="topmenu">Weight</button></a>
                 <!--Button for redirecting users to the distance section-->
-                <a href="#distance"><button>Distance</button></a>
+                <a href="#distance"><button class="topmenu">Distance</button></a>
+            </div>
           </nav>
       </section>
         <div id="all-conversion-sections">
           <!--This will have the conversion sections for Temperature, Weight, and Distance-->
-          <section id="temperature">
+          <section id="temperature" class="b temperature">
               <!--Temperature conversion section-->
               <div id="tmp">
                   <figure>
@@ -48,7 +51,7 @@
                   </aside>
                 </div>
           </section>
-          <section id="weight">
+          <section id="weight" class="b weight">
               <!--Weight conversion section-->
               <div id="wgt">
                   <figure>
@@ -74,7 +77,7 @@
                     </aside>
                 </div>
             </section>
-            <section id="distance">
+            <section id="distance" class="b distance">
                 <!--Distance conversion section-->
                 <div id="dst">
                     <figure>
