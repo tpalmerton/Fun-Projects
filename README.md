@@ -23,3 +23,4 @@ This is a respository for all of the different project I have created, completed
    ---First Project for easy HTML code basics
 2. [Conversion Calculator Layout HTML](index.html)
    -- Project to practice outlining sections, firgures, buttons and images in HTML
+   --- This is the [style sheet (CSS)](style.css) for this HTML project
