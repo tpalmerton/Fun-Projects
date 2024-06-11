@@ -24,3 +24,5 @@ This is a respository for all of the different project I have created, completed
 2. [Conversion Calculator Layout HTML](index.html)
    -- Project to practice outlining sections, firgures, buttons and images in HTML
    --- This is the [style sheet (CSS)](style.css) for this HTML project
+3. [Form validation HTML](form_validation.html)
+   --- Projec is for testing <script> and if statements
